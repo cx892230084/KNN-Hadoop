@@ -13,7 +13,7 @@ public class Mapper1 extends Mapper<Object, Text, IntWritable, Text>{
 	
 	
 	/**
-	 * 原数据格式 original data format:  < userId, movieId, rate, timestamp >
+	 * 原数据格式 original data format:  < userId movieId rate timestamp >
 	 * 输出 output: < userId，movieId-rate > 
 	 */
 	@Override
