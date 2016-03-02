@@ -27,7 +27,7 @@ public class ItemBasedCFDriver extends Configured implements Tool {
 		
 		job1.setJobName("CombineRates");
 		job1.setMapperClass(Mapper1.class);
-		job1.setReducerClass(Reduce1.class);
+		job1.setReducerClass(Reducer1.class);
 		
 		job1.setMapOutputKeyClass(IntWritable.class);
 		job1.setMapOutputValueClass(Text.class);
@@ -36,7 +36,7 @@ public class ItemBasedCFDriver extends Configured implements Tool {
 		job1.setOutputKeyClass(Text.class);
 		
 		FileInputFormat.addInputPath(job1, new Path("hdfs://localhost:8020/u.data")); //your path
-   		FileOutputFormat.setOutputPath(job1, new Path("hdfs://localhost:8020/CF/output6")); //your path
+   		FileOutputFormat.setOutputPath(job1, new Path("hdfs://localhost:8020/CF/output0")); //your path
 		
 		return job1.waitForCompletion(true)?0:1;
 	}
