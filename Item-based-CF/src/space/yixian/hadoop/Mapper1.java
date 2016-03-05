@@ -29,8 +29,7 @@ public class Mapper1 extends Mapper<Object, Text, IntWritable, Text>{
 			MovAndRate.set(tokenizer.nextToken() + "-" + tokenizer.nextToken());  //<userId，movieId-rate>
 			tokenizer.nextToken();//忽略评论时间 ignore the timestamp
 			
-			context.write(userId, MovAndRate);
-			
+			context.write(userId, MovAndRate);		
 		}
 	}
 	

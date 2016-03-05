@@ -91,8 +91,10 @@ public class SpecifiedUserRecommendation{
 			 * rowNumber covers all movieIDs. if the user didn't rate certain movies, the rate will be -1
 			 */
 			for(int i = 0; i < userMatrix.length; i++){
-				writer.write( (i+1) + "\t" + "1" + "\t" + userMatrix[i]); 
-				//System.out.println( (i+1) + "\t" + "1" + "\t" + userMatrx[i]);
+				
+				//M2 is the flag of the second matrix in matrix multiplication of MulMatrixMapper3 
+				//M2 作为MulMatrixMapper3在做矩阵乘法计算时对第二个矩阵的标识（M1*M2=M3）
+				writer.write( "M2\t"+ (i+1) + "\t" + "1" + "\t" + userMatrix[i]); 
 			}
 
 		}
