@@ -2,6 +2,7 @@ package space.yixian.hadoop;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -12,7 +13,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class ItemBasedCFDriver extends Configured implements Tool {
+public class SimilarityMatrixDriver extends Configured implements Tool {
 
 	@Override
 	public int run(String[] arg0) throws Exception {
@@ -61,8 +62,10 @@ public class ItemBasedCFDriver extends Configured implements Tool {
 
 	
 	public static void main(String[] args) throws Exception {
-		int res = ToolRunner.run(new Configuration(), new ItemBasedCFDriver(), args);		
-		System.exit(res);
+		int res = ToolRunner.run(new Configuration(), new SimilarityMatrixDriver(), args);		
+		System.exit(res);	
+		
+		
 	}
 }
 

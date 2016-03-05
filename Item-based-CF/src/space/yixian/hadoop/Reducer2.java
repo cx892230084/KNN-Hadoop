@@ -37,9 +37,13 @@ public class Reducer2 extends Reducer<Text, Text, Text, Text> {
 			
 		}
 		
-		similarity = rateMul / (Math.sqrt(sqrtSum1) * Math.sqrt(sqrtSum2));//Cosine Similarity 
-				
-		context.write(movies, new Text(similarity.toString()));
+		if(sqrtSum1 == 0 || sqrtSum2 == 0){
+			context.write(movies, new Text("0"));
+			
+		}else{
+			similarity = rateMul / (Math.sqrt(sqrtSum1) * Math.sqrt(sqrtSum2));//Cosine Similarity 
+			context.write(movies, new Text(similarity.toString()));
+		}
 		
 	}
 }

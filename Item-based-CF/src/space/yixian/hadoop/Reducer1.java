@@ -21,7 +21,7 @@ public class Reducer1 extends Reducer<IntWritable, Text, IntWritable, Text>{
 			allRates.append( val + " " );
 		}
 		
-		//输出 output: <userid,moiveId1-rate1 moiveId2-rate2 ... moiveIdN-rateN>
+		//输出 output: <userid,moiveId1 rate1, moiveId2 rate2 ... moiveIdN rateN>
 		context.write(key, new Text(allRates.toString().trim()));
 	}
 	
