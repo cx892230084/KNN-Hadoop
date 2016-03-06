@@ -2,6 +2,7 @@ package space.yixian.hadoop;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class SpecifiedUserRecommendation{
 		
 		
 		
-		public static void main(String[] args) throws Exception {		
+		public static void main(String[] args)  {		
 			
 			Integer userId = 0;	
 			scanner = new Scanner(System.in);
@@ -58,45 +59,61 @@ public class SpecifiedUserRecommendation{
 
 			Configuration configuration = new Configuration();
 			configuration.set("fs.defalutFS","hdfs://localhost:8088");
-			FileSystem fs = FileSystem.get(configuration);
+			FileSystem fs;
+			BufferedReader reader = null;
+			BufferedWriter writer = null;
 			
-			FSDataInputStream inputStream = fs.open(new Path("hdfs://localhost:8020/u.data"));
+			try {
+				fs = FileSystem.get(configuration);
 			
-			String newFileAdd = "hdfs://localhost:8020/SelectedUser";
-			FSDataOutputStream outputStream = fs.create(new Path(newFileAdd));
-			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-			
-			String aLine = null;
-			Integer[] userMatrix = new Integer[MOVIE_SUM];
-			Arrays.fill(userMatrix,-1); // default -1: not rated
-			
-			
-			 //find the specified user's rated movies  
-			while (( aLine = reader.readLine() ) !=null) {
-				String[] split = aLine.split(" |\t");
-				Integer user = Integer.valueOf(split[0]);
-				if(user == userId){
-					Integer rate = Integer.valueOf(split[2]); 
-					Integer  movieId = Integer.valueOf(split[1]);
-					userMatrix[movieId] = rate;
-				}				
-			}
-			
-			/**
-			 * 生成指定用户的评分矩阵 	form the specified user's rated matrix 
-			 * 矩阵存储格式	Matrix format: rowNumber \t columnNumber \t rate
-			 * 矩阵的行号rowNumber包含了所有电影id，如果某些电影该用户没有打分，那么分数为-1
-			 * rowNumber covers all movieIDs. if the user didn't rate certain movies, the rate will be -1
-			 */
-			for(int i = 0; i < userMatrix.length; i++){
+				FSDataInputStream inputStream = fs.open(new Path("hdfs://localhost:8020/u.data"));
 				
-				//M2 is the flag of the second matrix in matrix multiplication of MulMatrixMapper3 
-				//M2 作为MulMatrixMapper3在做矩阵乘法计算时对第二个矩阵的标识（M1*M2=M3）
-				writer.write( "M2\t"+ (i+1) + "\t" + "1" + "\t" + userMatrix[i]); 
-			}
+				String newFileAdd = "hdfs://localhost:8020/CF/Matrix2";
+				FSDataOutputStream outputStream = fs.create(new Path(newFileAdd));
+				
+				reader = new BufferedReader(new InputStreamReader(inputStream));
+				writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+			
+				
+					
+				 
+				/**
+				 * 生成指定用户的评分矩阵 	form the specified user's rated matrix 
+				 * 矩阵存储格式	Matrix format: M2 \t movieID \t columnNumber \t rate
+				 * MovieID is the row number
+				 * If you want to calculate N users simultaneously, you can use N columns
+				 */
 
+				String aLine = null;
+				while ((aLine = reader.readLine() ) !=null) {
+					String[] split = aLine.split(" |\t");
+					Integer user = Integer.valueOf(split[0]);
+					
+					if(user == userId){
+						Integer rate = Integer.valueOf(split[2]); 
+						Integer  movieId = Integer.valueOf(split[1]);
+						
+						//M2 is the flag of the second matrix in matrix multiplication of MulMatrixMapper3 
+						//M2 作为MulMatrixMapper3在做矩阵乘法计算时对第二个矩阵的标识（M1*M2=M3）
+						writer.write( "M2\t"+ movieId + "\t" + "1" + "\t" + rate + "\n " ); 
+					}				
+				}
+
+				
+				
+			} catch (IOException e) {
+				System.out.println("cannot open the file");
+				e.printStackTrace();
+			}finally{
+				try {
+					writer.close();
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.out.println("cannot close the file");
+				}
+			}
+			
 		}
 }
 

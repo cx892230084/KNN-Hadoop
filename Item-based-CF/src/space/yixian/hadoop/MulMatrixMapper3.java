@@ -12,6 +12,6 @@ import org.apache.hadoop.mapreduce.Mapper;
  * @author may
  *
  */
-public class MulMatrixMapper3 extends Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT> {
+public class MulMatrixMapper3 extends Mapper<Text, Text, Text, Text> {
 	
 }
