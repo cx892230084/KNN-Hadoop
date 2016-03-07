@@ -12,7 +12,7 @@ public class Reducer2 extends Reducer<Text, Text, Text, Text> {
 	
 	/**
 	 * 输入 input :< moiveA movieB, rateA rateB list>
-	 * 输出 output:< M1	moiveA	movieB, similarity >
+	 * 输出 output:< moiveA	movieB, similarity >
 	 * 采用Cosine相似度
 	 * Using Cosine Similarity 
 	 */
@@ -42,10 +42,8 @@ public class Reducer2 extends Reducer<Text, Text, Text, Text> {
 			
 		}else{
 			similarity = rateMul / (Math.sqrt(sqrtSum1) * Math.sqrt(sqrtSum2));//Cosine Similarity 
-			
-			//M1 is the flag of the first matrix in matrix multiplication of MulMatrixMapper3 
-			//M1 作为MulMatrixMapper3在做矩阵乘法计算时，对第一个矩阵的标识（M1*M2=M3）
-			context.write(new Text("M1\t"+movies), new Text(similarity.toString())); 
+
+			context.write(new Text(movies), new Text(similarity.toString())); 
 			
 		}
 		
