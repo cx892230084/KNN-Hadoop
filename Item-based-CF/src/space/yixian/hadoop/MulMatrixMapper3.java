@@ -39,6 +39,8 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
  * @author may
  *
  */
+
+
 public class MulMatrixMapper3 extends Mapper<Text, Text, Text, Text> {
 	
 	private int M1RowNum = 1682; // Similarity Matrix's row number 
@@ -60,9 +62,10 @@ public class MulMatrixMapper3 extends Mapper<Text, Text, Text, Text> {
 			mValue = tokenize[2];
 			
 			// M2ColNum决定了需要几个当前元素<row,column,mValue>
+            // 这个元素在整个计算中的使用次数
 			for(int i = 0 ; i < M2ColNum; i++ ){
 				// row决定了Cij的行号i
-				
+				 
 				
 				
 			}
