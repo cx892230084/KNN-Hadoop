@@ -38,16 +38,15 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
  */
 
 
-public class MulMatrixMapper3 extends Mapper<Text, Text, Text, Text> {
+public class MulMatrixMapper3 extends Mapper<Object, Object, Text, Text> {
 	
 	private int M1RowNum = 1682; // Similarity Matrix's row number 
 	private int M2ColNum = 1;  // User Matrix's column number
 		
 	
 	@Override
-	protected void map(Text key, Text value, Mapper<Text, Text, Text, Text>.Context context)
+	protected void map(Object key, Object value, Mapper<Object, Object, Text, Text>.Context context)
 			throws IOException, InterruptedException {
-		
 		FileSplit inputSplit =  (FileSplit) context.getInputSplit();
 		String path = inputSplit.getPath().toString();
 		String[] tokenize = value.toString().split("\t");
@@ -71,9 +70,10 @@ public class MulMatrixMapper3 extends Mapper<Text, Text, Text, Text> {
 			mValue = tokenize[2];
 			
 			for(int rowIDX = 1; rowIDX <= M1RowNum; rowIDX++)
-			context.write(new Text(rowNum+","+columnNum), new Text("M2,"+rowNum+","+mValue));
+			context.write(new Text(rowIDX+","+columnNum), new Text("M2,"+rowNum+","+mValue));
 		}
 		
 	}
+
 	
 }

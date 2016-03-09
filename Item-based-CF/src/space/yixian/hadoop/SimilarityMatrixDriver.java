@@ -53,7 +53,7 @@ public class SimilarityMatrixDriver extends Configured implements Tool {
 		job2.setOutputKeyClass(Text.class);
 		
 		FileInputFormat.addInputPath(job2, new Path("hdfs://localhost:8020/CF/job1out/part*")); //the output path of job1
-   		FileOutputFormat.setOutputPath(job2, new Path("hdfs://localhost:8020/CF/job2out-M1")); //your path
+   		FileOutputFormat.setOutputPath(job2, new Path("hdfs://localhost:8020/CF/M1")); //your path
 		
    		
 		return job2.waitForCompletion(true)?0:1;

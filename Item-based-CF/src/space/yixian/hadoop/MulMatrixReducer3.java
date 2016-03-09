@@ -39,33 +39,48 @@
 			HashMap<String, String> map1 = new HashMap<String,String>();
 			HashMap<String, String> map2 = new HashMap<String,String>();
 			
+			String MovieID = key.toString().split(",")[0];
+			
 			
 			for(Text value : values){
 				String[] split = value.toString().split(",");
+				
 				String flag = split[0];
 				String idx = split[1];
 				String mValue = split[2];
 				
+				//System.out.println(flag+"-"+idx+"-"+mValue);
+				
 				if(flag.equals("M1")){
-					map1.put(idx, mValue);
+					map1.put(idx, mValue); 
 				}else if(flag.equals("M2")){
-					map2.put(idx,mValue);
+					map2.put(idx, mValue); //rated movieId, rate
 				}
 			}
 			
 			
-			Double sum = new Double(0);
-			Iterator<String> iterator = map1.keySet().iterator();
 			
-			while(iterator.hasNext()){
-				String cur = iterator.next();
-				String valueA = map1.get(cur);
-				String valueB = map2.get(cur);
-				if(valueA != null && valueB != null)
-					sum += Double.valueOf(valueA) + Double.valueOf(valueB);
-			}
-			
-			context.write(key, new DoubleWritable(sum));		
+			if(map2.get(MovieID) != null){ // already rated 
+				context.write(new Text(MovieID), new DoubleWritable(0));
+				
+			}else{ // not rated
+				Double sum = new Double(0);
+				Iterator<String> iterator = map2.keySet().iterator();
+				
+				while(iterator.hasNext()){
+					String cur = iterator.next();
+					String valueA = map1.get(cur);
+					
+					if(valueA != null){
+						String valueB = map2.get(cur);
+						sum += Double.valueOf(valueA) * Double.valueOf(valueB);
+
+					}
+				}
+	
+				context.write(new Text(MovieID), new DoubleWritable(sum));		
 		}
-		
 	}
+}
+
+

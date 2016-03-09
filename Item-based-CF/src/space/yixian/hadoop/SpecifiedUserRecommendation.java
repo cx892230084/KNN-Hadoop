@@ -5,28 +5,19 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Scanner;
 
-import org.apache.commons.math3.optimization.linear.AbstractLinearOptimizer;
-import org.apache.hadoop.RandomTextWriterJob.RandomTextMapper;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.util.Tool;
+
 import org.apache.hadoop.util.ToolRunner;
 
-import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 
 public class SpecifiedUserRecommendation{
@@ -117,23 +108,48 @@ public class SpecifiedUserRecommendation{
 	}
 
 		
+	public static void calTopK(){
+		Integer k = 0;
+		scanner = new Scanner(System.in);
+
+		while(k < 1 || k > 100){
+			
+			if(!scanner.hasNextInt()){
+				System.out.println("Please input a number");
+				scanner.nextLine();
+			}else{
+				k = scanner.nextInt();
+				if(k < 1 || k > USER_SUM){
+					System.out.println("Please input a number(0-100)");
+				}
+			}
+		}
 		
+		
+		
+		
+	}
 		
 		
 		
 	public static void main(String[] args) throws Exception {		
 		
-		//calculate the similarity matrix M1
+		//1.calculate the similarity matrix M1
 //		int res = ToolRunner.run(new Configuration(), new SimilarityMatrixDriver(), args);		
 //		if(res == 1) System.exit(1);
 		
-		//calculate the user matrix M2
+		//2.calculate the user matrix M2
 //		System.out.println("Please input a userID(0-943) who you want to predict:");
 //		calUserMatrix();
 		
-		//calculate M1*M2
+		//3.calculate M1*M2
 		int res1 = ToolRunner.run(new Configuration(), new MulMatrixDriver(), args);		
 		if(res1 == 1) System.exit(1);
+		
+		//4.sort the result and get k neighbor   
+		System.out.println("Please input the top k(1-100) in result:");
+		calTopK();
+		
 		
 	}
 			

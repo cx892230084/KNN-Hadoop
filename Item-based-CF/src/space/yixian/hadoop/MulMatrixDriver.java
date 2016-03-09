@@ -22,18 +22,18 @@ public class MulMatrixDriver extends Configured implements Tool{
 		
 		Job job3 = Job.getInstance(configuration);
 		
-		job3.setJobName("CombineRates");
+		job3.setJobName("MulMatrix");
 		job3.setMapperClass(MulMatrixMapper3.class);
 		job3.setReducerClass(MulMatrixReducer3.class);
 		
 		job3.setMapOutputKeyClass(Text.class);
 		job3.setMapOutputValueClass(Text.class);
 		
-		job3.setOutputValueClass(Text.class);
-		job3.setOutputKeyClass(DoubleWritable.class);
+		job3.setOutputValueClass(DoubleWritable.class);
+		job3.setOutputKeyClass(Text.class);
 		
-		FileInputFormat.addInputPath(job3, new Path("hdfs://localhost:8020/u.data")); 
-   		FileOutputFormat.setOutputPath(job3, new Path("hdfs://localhost:8020/CF/job1out")); 
+		FileInputFormat.addInputPath(job3, new Path("hdfs://localhost:8020/CF/M*")); 
+   		FileOutputFormat.setOutputPath(job3, new Path("hdfs://localhost:8020/CF/Result")); 
 		  		
 		
    		return job3.waitForCompletion(true)?0:1;
