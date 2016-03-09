@@ -124,15 +124,16 @@ public class SpecifiedUserRecommendation{
 	public static void main(String[] args) throws Exception {		
 		
 		//calculate the similarity matrix M1
-		int res = ToolRunner.run(new Configuration(), new SimilarityMatrixDriver(), args);		
-		if(res == 1) System.exit(1);
+//		int res = ToolRunner.run(new Configuration(), new SimilarityMatrixDriver(), args);		
+//		if(res == 1) System.exit(1);
 		
 		//calculate the user matrix M2
-		System.out.println("Please input a userID(0-943) who you want to predict:");
-		calUserMatrix();
+//		System.out.println("Please input a userID(0-943) who you want to predict:");
+//		calUserMatrix();
 		
 		//calculate M1*M2
-		
+		int res1 = ToolRunner.run(new Configuration(), new MulMatrixDriver(), args);		
+		if(res1 == 1) System.exit(1);
 		
 	}
 			
