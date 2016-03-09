@@ -1,9 +1,6 @@
 package space.yixian.hadoop;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
-
-
 import org.apache.hadoop.io.Text;
 
 import org.apache.hadoop.mapreduce.Mapper;
@@ -30,11 +27,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
  * e.g.:
  *  	M1(2*4)  *  M2(4*3) =  M3(2*3) 
  *  
- * 		M1<2,1> is required when calculate THREE elements:M3<2,1> , M3<2,2> and M3<2,3>. 
- * 		(THREE equals to M2 column number)	
- *      So after reading a line of M1 and get the M1<rowNum,columnNum,value>, 
- *      we can set the KEY in Mapper as <2,1> , <2,2> and <2,3>,
- *      and replicate the M1<rowNum,columnNum,value> THREE times,
+ * 		Element M1<2,1> is required when calculate THREE elements: M3<2,1> , M3<2,2> and M3<2,3>. 
+ * 		(The number THREE equals to M2 column number)	
+ *      So after reading a line of M1 and get the M1<rowNum,columnNum,value> : [2,1, value of M1<2,1>]
+ *      we can set the KEY in Mapper as <rowNum, from 1 ro M2 column number> : <2,1> , <2,2> and <2,THREE>,
+ *      and set the VALUE in Mapper as <"M1",columnNum,value> :  ["M1",1, value of M1<2,1>]
  *      
  * @author may
  *
@@ -61,24 +58,21 @@ public class MulMatrixMapper3 extends Mapper<Text, Text, Text, Text> {
 			columnNum = tokenize[1];
 			mValue = tokenize[2];
 			
-			// M2ColNum决定了需要几个当前元素<row,column,mValue>
-            // 这个元素在整个计算中的使用次数
-			for(int i = 0 ; i < M2ColNum; i++ ){
-				// row决定了Cij的行号i
-				 
-				
-				
+			for(int colIDX = 1 ; colIDX <= M2ColNum; colIDX++ ){
+				//key<rowNum, from 1 ro M2 column number> in M3
+				//value<"M1",columnNum,similarity> 				
+				context.write(new Text(rowNum +","+ colIDX), new Text("M1,"+columnNum+","+mValue)); 	
 			}
 			
 			
 		}else if(path.contains("M2")){ //movieId(row)  userNum(==1)	 rate
-			String movieId = tokenize[0];
-			String rate = tokenize[2];
-						
+			rowNum = tokenize[0];
+			columnNum = tokenize[1];
+			mValue = tokenize[2];
+			
+			for(int rowIDX = 1; rowIDX <= M1RowNum; rowIDX++)
+			context.write(new Text(rowNum+","+columnNum), new Text("M2,"+rowNum+","+mValue));
 		}
-		
-		
-		
 		
 	}
 	
