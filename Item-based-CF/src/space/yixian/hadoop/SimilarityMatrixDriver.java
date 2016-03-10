@@ -33,8 +33,8 @@ public class SimilarityMatrixDriver extends Configured implements Tool {
 		job1.setOutputValueClass(Text.class);
 		job1.setOutputKeyClass(Text.class);
 		
-		FileInputFormat.addInputPath(job1, new Path("hdfs://localhost:8020/u.data")); //your path
-   		FileOutputFormat.setOutputPath(job1, new Path("hdfs://localhost:8020/CF/job1out")); //your path
+		FileInputFormat.addInputPath(job1, new Path(arg0[0])); //your path
+   		FileOutputFormat.setOutputPath(job1, new Path(arg0[1])); //your path
 		
    		job1.waitForCompletion(true);
    		
@@ -52,8 +52,8 @@ public class SimilarityMatrixDriver extends Configured implements Tool {
 		job2.setOutputValueClass(Text.class);
 		job2.setOutputKeyClass(Text.class);
 		
-		FileInputFormat.addInputPath(job2, new Path("hdfs://localhost:8020/CF/job1out/part*")); //the output path of job1
-   		FileOutputFormat.setOutputPath(job2, new Path("hdfs://localhost:8020/CF/M1")); //your path
+		FileInputFormat.addInputPath(job2, new Path(arg0[1])); //the output path of job1
+   		FileOutputFormat.setOutputPath(job2, new Path(arg0[2])); //your path
 		
    		
 		return job2.waitForCompletion(true)?0:1;

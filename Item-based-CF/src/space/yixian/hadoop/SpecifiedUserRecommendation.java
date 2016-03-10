@@ -204,28 +204,29 @@ public class SpecifiedUserRecommendation{
 		
 	public static void main(String[] args) throws Exception {		
 		
-		String dataSetAddress = "hdfs://localhost:8020/u.data";
 		
-		//1.calculate the similarity matrix M1
-//		int res = ToolRunner.run(new Configuration(), new SimilarityMatrixDriver(), args);		
-//		if(res == 1) System.exit(1);
+		String ipAddress = "hdfs://localhost:8020/";
+		
+		String[] address = {ipAddress+"u.data", ipAddress+"CF/job1out", ipAddress+"CF/M1"}; 
+		//1.calculate the similarity matrix M1 
+		int res = ToolRunner.run(new Configuration(), new SimilarityMatrixDriver(), address);		
+		if(res == 1) System.exit(1);
 		 
 		
 		//2.calculate the user matrix M2	
-		String M2Address = "hdfs://localhost:8020/CF/M2";
-		calUserMatrix(dataSetAddress,M2Address);
+		calUserMatrix(ipAddress+"u.data",ipAddress+"CF/M2");
 		
 		
-//		//3.calculate M1*M2
-		String[] address = {"hdfs://localhost:8020/CF/M*","hdfs://localhost:8020/CF/Result"}; 
-		int res1 = ToolRunner.run(new Configuration(), new MulMatrixDriver(), address);		
+		//3.calculate M1*M2
+		String[] address1 = {ipAddress+"CF/M*",ipAddress+"CF/Result"}; 
+		int res1 = ToolRunner.run(new Configuration(), new MulMatrixDriver(), address1);		
 		if(res1 == 1) System.exit(1);
 		
 		
 		//4.sort the result and get k neighbor   
-		String resultAddress = "hdfs://localhost:8020/CF/Result/part-r-00000";
+		String resultAddress = ipAddress+ "CF/Result" + "/part-r-00000";
 		calTopK(resultAddress);
-//		
+	
 		
 	}
 			
