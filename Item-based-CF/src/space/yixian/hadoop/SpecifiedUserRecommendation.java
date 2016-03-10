@@ -5,10 +5,16 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
-
+import org.apache.commons.net.ftp.parser.MacOsPeterFTPEntryParser;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -17,6 +23,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.hadoop.yarn.webapp.hamlet.Hamlet.I;
 
 
 
@@ -29,7 +36,9 @@ public class SpecifiedUserRecommendation{
 		
 	
 		
-	public static void calUserMatrix(){
+	public static void calUserMatrix(String inputAdd, String outAdd){
+		System.out.println("Please input a userID(0-943) who you want to predict:");
+		
 		Integer userId = 0;	
 		scanner = new Scanner(System.in);
 
@@ -57,10 +66,9 @@ public class SpecifiedUserRecommendation{
 		try {
 			fs = FileSystem.get(configuration);
 		
-			FSDataInputStream inputStream = fs.open(new Path("hdfs://localhost:8020/u.data"));
+			FSDataInputStream inputStream = fs.open(new Path(inputAdd));
 			
-			String newFileAdd = "hdfs://localhost:8020/CF/M2";
-			FSDataOutputStream outputStream = fs.create(new Path(newFileAdd));
+			FSDataOutputStream outputStream = fs.create(new Path(outAdd));
 			
 			reader = new BufferedReader(new InputStreamReader(inputStream));
 			writer = new BufferedWriter(new OutputStreamWriter(outputStream));
@@ -108,20 +116,82 @@ public class SpecifiedUserRecommendation{
 	}
 
 		
-	public static void calTopK(){
+	public static void calTopK(String address){
+		System.out.println("Please input the top k(1-100) in result:");
+		
 		Integer k = 0;
+		int max = 1000;
 		scanner = new Scanner(System.in);
 
-		while(k < 1 || k > 100){
+		while(k < 1 || k > max){
 			
 			if(!scanner.hasNextInt()){
 				System.out.println("Please input a number");
 				scanner.nextLine();
 			}else{
 				k = scanner.nextInt();
-				if(k < 1 || k > USER_SUM){
+				if(k < 1 || k > max){
 					System.out.println("Please input a number(0-100)");
 				}
+			}
+		}
+		
+		
+		Configuration configuration = new Configuration();
+		configuration.set("fs.defalutFS","hdfs://localhost:8088");
+		FileSystem fs;
+		BufferedReader reader = null;
+		BufferedWriter writer = null;
+		
+		try {
+			fs = FileSystem.get(configuration);
+		
+			FSDataInputStream inputStream = fs.open(new Path(address));	
+			reader = new BufferedReader(new InputStreamReader(inputStream));
+						
+			
+			HashMap<Integer, Double> map = new HashMap<>();
+			ArrayList<Map.Entry<Integer, Double>> arrayList;
+			
+			String aLine = null;
+			while ((aLine = reader.readLine() ) !=null) {
+				String[] split = aLine.split("\t");
+				int movieID = Integer.valueOf(split[0]);
+				Double prediction = Double.valueOf(split[1]);	
+				
+				if(!prediction.equals(0)){ // not yet rated 
+					map.put(movieID, prediction);}			
+			}
+			
+			arrayList = new ArrayList<Map.Entry<Integer,Double>>(map.entrySet());
+			
+			
+			Collections.sort(arrayList, new Comparator<Map.Entry<Integer, Double>>() {
+				
+				@Override
+				public int compare(Entry<Integer, Double> o1, Entry<Integer, Double> o2) {
+					return o1.getValue().doubleValue() == o2.getValue().doubleValue() ? 0
+							:  (o1.getValue().doubleValue() < o2.getValue().doubleValue() ? 1 : -1);
+				};
+				
+			});
+			
+			for(int i = 0 ; i < k ; i++){
+				System.out.println("Top"+ (i+1) +"  Movie id:"+arrayList.get(i).getKey()+"  Similarity:"+arrayList.get(i).getValue());
+			}
+					
+			
+			
+			
+		} catch (IOException e) {
+			System.out.println("cannot open the file");
+			e.printStackTrace();
+		}finally{
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("cannot close the file");
 			}
 		}
 		
@@ -134,22 +204,28 @@ public class SpecifiedUserRecommendation{
 		
 	public static void main(String[] args) throws Exception {		
 		
+		String dataSetAddress = "hdfs://localhost:8020/u.data";
+		
 		//1.calculate the similarity matrix M1
 //		int res = ToolRunner.run(new Configuration(), new SimilarityMatrixDriver(), args);		
 //		if(res == 1) System.exit(1);
+		 
 		
-		//2.calculate the user matrix M2
-//		System.out.println("Please input a userID(0-943) who you want to predict:");
-//		calUserMatrix();
+		//2.calculate the user matrix M2	
+		String M2Address = "hdfs://localhost:8020/CF/M2";
+		calUserMatrix(dataSetAddress,M2Address);
 		
-		//3.calculate M1*M2
-		int res1 = ToolRunner.run(new Configuration(), new MulMatrixDriver(), args);		
+		
+//		//3.calculate M1*M2
+		String[] address = {"hdfs://localhost:8020/CF/M*","hdfs://localhost:8020/CF/Result"}; 
+		int res1 = ToolRunner.run(new Configuration(), new MulMatrixDriver(), address);		
 		if(res1 == 1) System.exit(1);
 		
-		//4.sort the result and get k neighbor   
-		System.out.println("Please input the top k(1-100) in result:");
-		calTopK();
 		
+		//4.sort the result and get k neighbor   
+		String resultAddress = "hdfs://localhost:8020/CF/Result/part-r-00000";
+		calTopK(resultAddress);
+//		
 		
 	}
 			

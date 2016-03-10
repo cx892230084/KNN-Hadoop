@@ -32,8 +32,8 @@ public class MulMatrixDriver extends Configured implements Tool{
 		job3.setOutputValueClass(DoubleWritable.class);
 		job3.setOutputKeyClass(Text.class);
 		
-		FileInputFormat.addInputPath(job3, new Path("hdfs://localhost:8020/CF/M*")); 
-   		FileOutputFormat.setOutputPath(job3, new Path("hdfs://localhost:8020/CF/Result")); 
+		FileInputFormat.addInputPath(job3, new Path(arg0[0])); 
+   		FileOutputFormat.setOutputPath(job3, new Path(arg0[1])); 
 		  		
 		
    		return job3.waitForCompletion(true)?0:1;
