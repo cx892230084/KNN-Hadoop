@@ -40,7 +40,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
 public class MulMatrixMapper3 extends Mapper<Object, Object, Text, Text> {
 	
-	private int M1RowNum = 1682; // Similarity Matrix's row number 
+	private int M1RowNum = SpecifiedUserRecommendation.MOVIE_SUM; // Similarity Matrix's row number 
 	private int M2ColNum = 1;  // User Matrix's column number
 		
 	

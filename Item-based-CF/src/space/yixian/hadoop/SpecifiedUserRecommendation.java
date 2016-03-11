@@ -30,8 +30,8 @@ import org.apache.hadoop.yarn.webapp.hamlet.Hamlet.I;
 public class SpecifiedUserRecommendation{
 		
 
-	private final static Integer MOVIE_SUM = 1682;
-	private final static Integer USER_SUM = 943;
+	public final static Integer MOVIE_SUM = 27278; //1682;
+	public final static Integer USER_SUM = 943;
 	private static Scanner scanner;
 		
 	
@@ -207,14 +207,14 @@ public class SpecifiedUserRecommendation{
 		
 		String ipAddress = "hdfs://localhost:8020/";
 		
-		String[] address = {ipAddress+"u.data", ipAddress+"CF/job1out", ipAddress+"CF/M1"}; 
+		String[] address = {ipAddress+"ratings.csv", ipAddress+"CF/job1out", ipAddress+"CF/M1"}; 
 		//1.calculate the similarity matrix M1 
 		int res = ToolRunner.run(new Configuration(), new SimilarityMatrixDriver(), address);		
 		if(res == 1) System.exit(1);
 		 
 		
 		//2.calculate the user matrix M2	
-		calUserMatrix(ipAddress+"u.data",ipAddress+"CF/M2");
+		calUserMatrix(ipAddress+"ratings.csv",ipAddress+"CF/M2");
 		
 		
 		//3.calculate M1*M2
@@ -224,7 +224,7 @@ public class SpecifiedUserRecommendation{
 		
 		
 		//4.sort the result and get k neighbor   
-		String resultAddress = ipAddress+ "CF/Result" + "/part-r-00000";
+		String resultAddress = ipAddress+ "CF/Result/" + "part-r-00000";
 		calTopK(resultAddress);
 	
 		
