@@ -27,6 +27,10 @@ import org.apache.hadoop.yarn.webapp.hamlet.Hamlet.I;
 
 
 
+/**
+ * @author maycheung
+ *
+ */
 public class SpecifiedUserRecommendation{
 		
 
@@ -65,7 +69,7 @@ public class SpecifiedUserRecommendation{
 		
 		try {
 			fs = FileSystem.get(configuration);
-		
+			
 			FSDataInputStream inputStream = fs.open(new Path(inputAdd));
 			
 			FSDataOutputStream outputStream = fs.create(new Path(outAdd));
@@ -73,7 +77,6 @@ public class SpecifiedUserRecommendation{
 			reader = new BufferedReader(new InputStreamReader(inputStream));
 			writer = new BufferedWriter(new OutputStreamWriter(outputStream));
 		
-			
 				
 			 
 			/**
@@ -89,7 +92,7 @@ public class SpecifiedUserRecommendation{
 				String[] split = aLine.split(" |\t");
 				Integer user = Integer.valueOf(split[0]);
 				
-				if(user == userId){
+				if(user.intValue() == userId.intValue()){
 					String rate = split[2]; 
 					String movieId = split[1];
 			
@@ -100,7 +103,7 @@ public class SpecifiedUserRecommendation{
 
 			
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println("cannot open the file");
 			e.printStackTrace();
 		}finally{
@@ -204,19 +207,18 @@ public class SpecifiedUserRecommendation{
 		
 	public static void main(String[] args) throws Exception {		
 		
-		
 		String ipAddress = "hdfs://localhost:8020/";
 		
-		String[] address = {ipAddress+"ratings.csv", ipAddress+"CF/job1out", ipAddress+"CF/M1"}; 
+		String[] address = {ipAddress+"u.data", ipAddress+"CF/job1out", ipAddress+"CF/M1"}; 
 		//1.calculate the similarity matrix M1 
 		int res = ToolRunner.run(new Configuration(), new SimilarityMatrixDriver(), address);		
 		if(res == 1) System.exit(1);
 		 
 		
 		//2.calculate the user matrix M2	
-		calUserMatrix(ipAddress+"ratings.csv",ipAddress+"CF/M2");
+		calUserMatrix(ipAddress+"u.data",ipAddress+"CF/M2");
 		
-		
+			
 		//3.calculate M1*M2
 		String[] address1 = {ipAddress+"CF/M*",ipAddress+"CF/Result"}; 
 		int res1 = ToolRunner.run(new Configuration(), new MulMatrixDriver(), address1);		

@@ -40,7 +40,7 @@ public class SimilarityMatrixDriver extends Configured implements Tool {
    		
    		
    		Job job2 = Job.getInstance(configuration);
-		
+   			
 		job2.setJobName("CalculateSimilarity");
 		job2.setMapperClass(Mapper2.class);
 		job2.setReducerClass(Reducer2.class);
@@ -52,7 +52,7 @@ public class SimilarityMatrixDriver extends Configured implements Tool {
 		job2.setOutputValueClass(Text.class);
 		job2.setOutputKeyClass(Text.class);
 		
-		FileInputFormat.addInputPath(job2, new Path(arg0[1])); //the output path of job1
+		FileInputFormat.addInputPath(job2, new Path(arg0[1]+"/pa*")); //the output path of job1
    		FileOutputFormat.setOutputPath(job2, new Path(arg0[2])); //your path
 		
    		

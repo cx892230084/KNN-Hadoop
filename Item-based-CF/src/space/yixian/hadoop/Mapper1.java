@@ -17,7 +17,7 @@ public class Mapper1 extends Mapper<Object, Text, IntWritable, Text>{
 	protected void map(Object key, Text value, Mapper<Object, Text, IntWritable, Text>.Context context)
 			throws IOException, InterruptedException {
 		
-		String[] spilt = value.toString().split(",");
+		String[] spilt = value.toString().split("\t| ");
 		String userid = spilt[0];
 		String movieid = spilt[1];
 		String rate = spilt[2];
