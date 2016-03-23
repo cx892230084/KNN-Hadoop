@@ -40,7 +40,7 @@ public class SpecifiedUserRecommendation{
 		
 	
 		
-	public static void calUserMatrix(String inputAdd, String outAdd){
+	public static void calUserMatrix(String inputAdd, String outAdd) throws IOException{
 		System.out.println("Please input a userID(0-943) who you want to predict:");
 		
 		Integer userId = 0;	
@@ -62,14 +62,13 @@ public class SpecifiedUserRecommendation{
 		
 
 		Configuration configuration = new Configuration();
-		configuration.set("fs.defalutFS","hdfs://localhost:8088");
-		FileSystem fs;
+		configuration.set("fs.defalutFS","hdfs://localhost:8020");
+		FileSystem fs = FileSystem.get(configuration);
 		BufferedReader reader = null;
 		BufferedWriter writer = null;
 		
 		try {
-			fs = FileSystem.get(configuration);
-			
+						
 			FSDataInputStream inputStream = fs.open(new Path(inputAdd));
 			
 			FSDataOutputStream outputStream = fs.create(new Path(outAdd));
@@ -141,7 +140,7 @@ public class SpecifiedUserRecommendation{
 		
 		
 		Configuration configuration = new Configuration();
-		configuration.set("fs.defalutFS","hdfs://localhost:8088");
+		configuration.set("fs.defalutFS","hdfs://localhost:8020");
 		FileSystem fs;
 		BufferedReader reader = null;
 		BufferedWriter writer = null;

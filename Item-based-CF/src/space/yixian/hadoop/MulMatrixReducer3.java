@@ -13,19 +13,25 @@
 	 * input value: all the required elements in M1,M2 to calculate the M3<i,j>
 	 * 
 	 * output key: M3<i,j>
-	 * output value: value of M3<i,j>
+	 * output value: prediction = value of M3<i,j> / weight
+	 * 				 (weight = sum of every value of M1)
 	 * 
 	 * calculate process & e.g.:
+	 * 		input :
 	 * 		key : M3<1,1> 
 	 * 		value : <M1,1,10> <M2,1,5> // if the second number of them is the same, multiply the value'': 10*5
 	 *  			<M1,2,20> 		   //if no matched number in the other matrix, ignore this line 
-	 *   			<M1,3,30> <M2,3,10> //30*10
-	 *   	
+	 *   			<M1,3,30> <M2,3,10> //	30*10
+	 *   	 (no  <M2,2,value>, because assume that the value equal to 0, 
+	 *   	it would not store in the files and not be wrote by program )
+	 *  
 	 *   	add the products together to get the value of M3<1,1> = 10*5 + 30*10 = 350
+	 *   	add every value of M1 to get the weight=10+20+30=60
 	 *   	
-	 *   (no  <M2,2,value>, because assume that the value equal to 0, 
-	 *   	it would not store in the files and not be wrote by program )	
-	 * 
+	 *   	output :
+	 *   	key : M3<1,1> 
+	 *   	value : prediction = value of M3<1,1> / weight = 350 / 60 = 5.8333...
+	 *   
 	 * 
 	 * @author may
 	 *
@@ -40,7 +46,7 @@
 			HashMap<String, String> map2 = new HashMap<String,String>();
 			
 			String MovieID = key.toString().split(",")[0];
-			
+			double M1Sum = 0;
 			
 			for(Text value : values){
 				String[] split = value.toString().split(",");
@@ -53,6 +59,7 @@
 				
 				if(flag.equals("M1")){
 					map1.put(idx, mValue); 
+					M1Sum += Double.valueOf(mValue);
 				}else if(flag.equals("M2")){
 					map2.put(idx, mValue); //rated movieId, rate
 				}
@@ -64,7 +71,7 @@
 				context.write(new Text(MovieID), new DoubleWritable(0));
 				
 			}else{ // not rated
-				Double sum = new Double(0);
+				Double M3Value = new Double(0);
 				Iterator<String> iterator = map2.keySet().iterator();
 				
 				while(iterator.hasNext()){
@@ -73,12 +80,12 @@
 					
 					if(valueA != null){
 						String valueB = map2.get(cur);
-						sum += Double.valueOf(valueA) * Double.valueOf(valueB);
+						M3Value += Double.valueOf(valueA) * Double.valueOf(valueB);
 
 					}
 				}
 	
-				context.write(new Text(MovieID), new DoubleWritable(sum));		
+				context.write(new Text(MovieID), new DoubleWritable(M3Value / M1Sum));		
 		}
 	}
 }

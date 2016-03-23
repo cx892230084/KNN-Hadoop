@@ -30,7 +30,7 @@ public class SimilarityMatrixDriver extends Configured implements Tool {
 		job1.setMapOutputKeyClass(IntWritable.class);
 		job1.setMapOutputValueClass(Text.class);
 		
-		job1.setOutputValueClass(Text.class);
+		job1.setOutputValueClass(Text.class);  
 		job1.setOutputKeyClass(Text.class);
 		
 		FileInputFormat.addInputPath(job1, new Path(arg0[0])); //your path
